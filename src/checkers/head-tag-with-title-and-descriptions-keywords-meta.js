@@ -1,0 +1,21 @@
+"use strict";
+
+module.exports = {
+    check(dom, options) {
+        if (options.enabled == 0) {
+            return;
+        }
+	let report = [];
+        if (!dom.window.document.title) {
+            report.push('This HTML without <title> tag');
+        }
+        const metaList = ['descriptions', 'keywords'];
+        metaList.forEach(function(meta) {
+            let element = dom.window.document.querySelector('head > meta[name=' + meta + ']');
+            if (!element || (element && !element.getAttribute('content'))) {
+                report.push('This HTML without <meta name="' + meta + '"> tag');
+            }
+        });
+	return report.join("\n");
+    }
+};
