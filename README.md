@@ -9,7 +9,7 @@ Install with npm `npm install seo-inspector --save`
 
 Require the library and then all the methods listed below will be made available to you.
 
-#### Read from a HTML file, write result to a file
+#### One way: read from a HTML file, write result to a file
 
 ```js
 const SeoInspector = require('seo-inspector')
@@ -23,7 +23,7 @@ new SeoInspector({ done:
 .write('destination/report.txt');
 ```
 
-#### Read from a Node Readable Stream, write result to a Node Writable Stream
+#### Two way: read from a Node Readable Stream, write result to a Node Writable Stream
 
 ```js
 const SeoInspector = require('seo-inspector')
@@ -37,7 +37,7 @@ new SeoInspector({ done:
 .write(fs.createWriteStream('destination/report.txt'));
 ```
 
-#### Read from a HTML file, write result to console
+#### Three way: read from a HTML file, write result to console
 
 ```js
 const SeoInspector = require('seo-inspector')
@@ -68,24 +68,24 @@ or
 No any SEO defect found.
 ```
 
-#### free to chain any rules you want, default is to apply all rules to check
+#### Chaining any rules and config check options, or just to apply all rules by default
 
-Supported SEO rules now: `ImgTagWithAltAttritube`, `ATagWithRelAttritube`, `HeadTagWithTitleAndDescriptionsKeywordsMeta`, `NoTooManyStrongTags` and `NoMoreThanOneH1Tag`
+Now supported SEO rules are `ImgTagWithAltAttritube`, `ATagWithRelAttritube`, `HeadTagWithTitleAndDescriptionsKeywordsMeta`, `NoTooManyStrongTags` and `NoMoreThanOneH1Tag`
 
 ```js
-const SeoInspector = require('seo-inspector')
-
-new SeoInspector({ done:
-                    (err, data) => {
-                        if (err) throw err;
-                    }
-                })
-.read('source/target.html')
+...
 .addRule('ImgTagWithAltAttritube')
-.addRule('NoTooManyStrongTags')
-.write('destination/report.txt');
+.addRule('NoTooManyStrongTags', { threshold: 20 })
+...
 ```
 
+#### Add custom rule by creating a class to extend base rule and implement check method.
 
+```js
+import UserCustomRule from './UserCustomRule';
+...
+.addRule('UserCustom', { object: new UserCustomRule({ threshold: 5 }) })
+...
+```
 
 
