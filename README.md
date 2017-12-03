@@ -9,6 +9,17 @@ Install with npm `npm install seo-inspector --save`
 
 Require the library and then all the methods listed below will be made available to you.
 
+```js
+new SeoInspector(<options>).read(<input>).addRule(<rule>).addRule(<rule>).write(<output>);
+```
+
+Usage:
+
+options.done: callback function.
+input: a HTML file path
+output: a file path
+rule: predefined rule name and settings.
+
 #### One way: read from a HTML file, write result to a file
 
 ```js
