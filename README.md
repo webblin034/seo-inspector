@@ -12,8 +12,8 @@ Require the library and then all the methods listed below will be made available
 #### One way: read from a HTML file, write result to a file
 
 ```js
+import fs from 'fs';
 const SeoInspector = require('seo-inspector')
-
 new SeoInspector({ done:
                     (err, data) => {
                         if (err) throw err;
@@ -26,8 +26,8 @@ new SeoInspector({ done:
 #### Two way: read from a Node Readable Stream, write result to a Node Writable Stream
 
 ```js
+import fs from 'fs';
 const SeoInspector = require('seo-inspector')
-
 new SeoInspector({ done:
                     (err, data) => {
                         if (err) throw err;
@@ -40,8 +40,8 @@ new SeoInspector({ done:
 #### Three way: read from a HTML file, write result to console
 
 ```js
+import fs from 'fs';
 const SeoInspector = require('seo-inspector')
-
 new SeoInspector({ done:
                     (err, data) => {
                         if (err) throw err;
