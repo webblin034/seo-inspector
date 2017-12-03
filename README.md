@@ -81,6 +81,8 @@ Now supported SEO rules are `ImgTagWithAltAttritube`, `ATagWithRelAttritube`, `H
 
 #### Add custom rule by creating a class to extend base rule and implement check method.
 
+The `object` key is required setting for check options : 
+
 ```js
 import UserCustomRule from './UserCustomRule';
 ...
@@ -88,4 +90,26 @@ import UserCustomRule from './UserCustomRule';
 ...
 ```
 
+Implement your custom rule checker class, extend base rule class is mandatory :
 
+```js
+'use strict'
+
+import BaseRule from './BaseRule'
+
+class NoTooManyStrongTagsRule extends BaseRule {
+  check (dom) {
+    if (this.options.enabled === 0) {
+      return
+    }
+    let report = ''
+    const elements = dom.window.document.querySelectorAll('strong')
+    if (elements && elements.length > this.options.threshold) {
+      report += 'This HTML have more than ' + this.options.threshold + ' <strong> tags'
+    }
+    return report
+  }
+}
+
+export default NoTooManyStrongTagsRule
+```
