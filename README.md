@@ -15,10 +15,10 @@ new SeoInspector(<options>).read(<input>).addRule(<rule>).addRule(<rule>).write(
 
 Usage:
 
-options.done: callback function.
-input: a HTML file path
-output: a file path
-rule: predefined rule name and settings.
+* options.done: callback function.
+* input: a HTML file path
+* output: a file path
+* rule: predefined rule name and settings.
 
 #### One way: read from a HTML file, write result to a file
 
