@@ -3,7 +3,7 @@
 import fs from 'fs';
 import { JSDOM } from 'jsdom';
 import _ from 'lodash';
-import conv from 'iconv-lite';
+import iconv from 'iconv-lite';
 import RuleFactory from './RuleFactory';
 
 class SeoInspector {
@@ -67,7 +67,7 @@ class SeoInspector {
     	            });
     	            break;
     	        case 'ReadStream':
-    	            const readStream = input;
+                    const readStream = this.input;
     	            let chunks = [];
     	            let size = 0;
     	            readStream.on('data', (chunk) => {
@@ -123,11 +123,8 @@ class SeoInspector {
             } else {
                 contentStr = "No any SEO defect found. \n"; 
             }
-            const type = this.output.constructor.name;
+            let type = this.output.constructor.name;
             switch (type) {
-                case 'Console':
-                    console.log(contentStr);
-                    break;
                 case 'String':
                     const filePath = this.output;
                     fs.writeFile(filePath, contentStr, (err) => {
@@ -142,6 +139,10 @@ class SeoInspector {
     	            writeStream.on('error', (e) => {
                         this.done(e);
                     });
+                    break;
+                case 'Console':
+                case null:
+                    console.log(contentStr);
                     break;
                 default:
                     return this.done(new Error('"output" option is invalid, supported list: a file path, Node Writable Stream and console.'));
