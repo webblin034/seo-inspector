@@ -16,6 +16,9 @@
     "seo-inspector"
   ],
   "author": "Wow Chuan<wowchuan@gmail.com>",
+  "bugs": {
+    "url": "https://github.com/webblin034/seo-inspector/issues"
+  },
   "dependencies": {
     "jsdom": "^11.5.1",
     "lodash": "^4.17.4"
