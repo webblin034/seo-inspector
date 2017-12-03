@@ -6,22 +6,15 @@ import _ from 'lodash';
 import conv from 'iconv-lite';
 import RuleFactory from './RuleFactory';
 
-const defaultRules = {
-    'ImgTagWithAltAttritube': { enabled: 1 },
-    'ATagWithRelAttritube': { enabled: 1 },
-    'HeadTagWithTitleAndDescriptionsKeywordsMeta': { enabled: 1 },
-    'NoTooManyStrongTags': { enabled: 1, threshold: 15 },
-    'NoMoreThanOneH1Tag': { enabled: 1 }
-};
-
 class SeoInspector {
 
     constructor(options = {}) {
-        this.done = (options.done) ? options.done : (err) => { if (err) throw err };
+        this.done = (_.has(options, ['done'])) ? options.done : (err) => { if (err) throw err };
         this.input = null;
         this.output = null;
-        this.rules = {};
         this.ruleFactory = new RuleFactory();
+        this.defaultRules = this.ruleFactory.getDefaultRules();
+        this.rules = {};
         return this;
     }
 
@@ -31,7 +24,11 @@ class SeoInspector {
     }
 
     addRule(name, options) {
-        if (_.has(defaultRules, name)) {
+        if (_.has(this.defaultRules, name)) {
+            _.set(this.rules, name, options);
+        }
+
+        if (_.has(options, ['object'])) {
             _.set(this.rules, name, options);
         }
         return this;
@@ -40,7 +37,7 @@ class SeoInspector {
     write(output) {
         this.output = output;
         if (_.isEmpty(this.rules)) {
-            this.rules = defaultRules;
+            this.rules = this.defaultRules;
         }
         this._run();
     }
@@ -82,6 +79,9 @@ class SeoInspector {
     	                let contentStr = iconv.decode(buffer, 'utf8');
     	                resolve(contentStr);
     	            });
+    	            readStream.on('error', (e) => {
+                        this.done(e);
+                    });
     	            break;
     	        default:
     	            return this.done(new Error('read() input is invalid, supported list: a HTML file path and Node Readable Stream.'));
@@ -100,9 +100,14 @@ class SeoInspector {
         return new Promise((resolve, reject) => {
             let summary = [];
             _.forEach(this.rules, (options, name) => {
-                let ruleObj = this.ruleFactory.create(name, options, this.done);
+                let ruleObj;
+                if (_.has(options, ['object'])) {
+                    ruleObj = options.object;
+                } else {
+                    ruleObj = this.ruleFactory.create(name, options, this.done);
+                }
                 let report = ruleObj.check(dom)
-                if (report && report != 'undefined') {
+                if (report) {
                     summary.push(report);
                 }
             });
@@ -112,7 +117,7 @@ class SeoInspector {
     
     _output(summary) {
         return new Promise((resolve, reject) => {
-            let contentStr = "";
+            let contentStr = '';
             if (summary && summary.length > 0) {
                 contentStr = "SEO defects found: \n" + summary.join("\n") + "\n";
             } else {
@@ -134,11 +139,14 @@ class SeoInspector {
                     writeStream.write(contentStr, (err) => {
                         if (err) return this.done(err);
                     });
+    	            writeStream.on('error', (e) => {
+                        this.done(e);
+                    });
                     break;
                 default:
                     return this.done(new Error('"output" option is invalid, supported list: a file path, Node Writable Stream and console.'));
             }
-            resolve('');
+            resolve(contentStr);
             return this.done(null, contentStr);
         });
     }

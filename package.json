@@ -6,7 +6,7 @@
   "scripts": {
     "build": "gulp TranspileEs6ToEs5",
     "dev": "gulp TranspileEs6ToEs5 && node_modules/gulp/bin/gulp.js Watch",
-    "test": "mocha build/tests/*"
+    "test": "mocha build/tests/seo-inspector.js"
   },
   "repository": {
     "type": "git",

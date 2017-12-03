@@ -4,7 +4,7 @@ import gulp from 'gulp';
 import babel from 'gulp-babel';
 
 gulp.task('Watch', () => {
-    gulp.watch(['src/*.js', 'src/rules/*.js', 'tests/*.js'], ['TranspileEs6ToEs5']);
+    gulp.watch(['src/*.js', 'src/rules/*.js', 'tests/*.js', 'tests/rules/*.js'], ['TranspileEs6ToEs5']);
 });
 
 gulp.task('TranspileEs6ToEs5', () => {
@@ -15,6 +15,9 @@ gulp.task('TranspileEs6ToEs5', () => {
         .pipe(babel({ presets: ['es2015'], plugins: ['add-module-exports'] }))
         .pipe(gulp.dest('./build/rules'));
     gulp.src('tests/*.js')
+        .pipe(babel({ presets: ['es2015'], plugins: ['add-module-exports'] }))
+        .pipe(gulp.dest('./build/tests'));
+    gulp.src('tests/rules/*.js')
         .pipe(babel({ presets: ['es2015'], plugins: ['add-module-exports'] }))
         .pipe(gulp.dest('./build/tests'));
 });

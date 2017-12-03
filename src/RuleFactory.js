@@ -1,5 +1,7 @@
 'use strict';
 
+import _ from 'lodash';
+
 import ImgTagWithAltAttritubeRule from './rules/ImgTagWithAltAttritubeRule';
 import ATagWithRelAttritubeRule from './rules/ATagWithRelAttritubeRule';
 import HeadTagWithTitleAndDescriptionsKeywordsMetaRule from './rules/HeadTagWithTitleAndDescriptionsKeywordsMetaRule';
@@ -10,26 +12,27 @@ class RuleFactory {
 
     constructor() {
 	this.rules = {
-	    'ImgTagWithAltAttritube': { options: { enabled: 1 } },
-	    'ATagWithRelAttritube': { options: { enabled: 1 } },
-	    'HeadTagWithTitleAndDescriptionsKeywordsMeta': { options: { enabled: 1 } },
-	    'NoTooManyStrongTags': { options: { enabled: 1, threshold: 15 } },
-	    'NoMoreThanOneH1Tag': { options: { enabled: 1 } }
+	    'ImgTagWithAltAttritube': { enabled: 1 },
+	    'ATagWithRelAttritube': { enabled: 1 },
+	    'HeadTagWithTitleAndDescriptionsKeywordsMeta': { enabled: 1 },
+	    'NoTooManyStrongTags': { enabled: 1, threshold: 15 },
+	    'NoMoreThanOneH1Tag': { enabled: 1 }
 	};
     }
 
     create(name, options, done) {
+        let opts = (_.has(this.rules, name) && !options) ? _.get(this.rules, [name]) : options;
         switch(name) {
             case 'ImgTagWithAltAttritube':
-                return new ImgTagWithAltAttritubeRule(options);
+                return new ImgTagWithAltAttritubeRule(opts);
             case 'ATagWithRelAttritube':
-                return new ATagWithRelAttritubeRule(options);
+                return new ATagWithRelAttritubeRule(opts);
             case 'HeadTagWithTitleAndDescriptionsKeywordsMeta':
-                return new HeadTagWithTitleAndDescriptionsKeywordsMetaRule(options);
+                return new HeadTagWithTitleAndDescriptionsKeywordsMetaRule(opts);
             case 'NoTooManyStrongTags': 
-                return new NoTooManyStrongTagsRule(options);
+                return new NoTooManyStrongTagsRule(opts);
             case 'NoMoreThanOneH1Tag':
-                return new NoMoreThanOneH1TagRule(options);
+                return new NoMoreThanOneH1TagRule(opts);
             default:
                 return done(new Error('Failed to init rule object due to invalid rule name.'));
         }

@@ -2,88 +2,126 @@
 
 import SeoInspector from '../SeoInspector';
 import fs from 'fs';
-import { expect } from 'chai';
+import { expect, } from 'chai';
+import chai from 'chai';
+import UserCustomRule from './UserCustomRule';
 
-function getFileContent(path) {
-    return new Promise((resolve, reject) => {
-        fs.open(path, 'r', (err, fd) => {
-            if (err) throw err
-            let buffer = new Buffer(1024);
-            fs.read(fd, buffer, 0, buffer.length, 0, function (err, bytes) {
-                if  (err) throw err;
-                if (bytes > 0) {
-                    resolve(buffer.slice(0, bytes).toString());
-                }
-                fs.close(fd, function (err) {
-                    if (err) throw err;
-                });
-            });
-        });
-    });
-};
-
-var rrr = '';
 describe('Read from a HTML file, then check SEO rules, then write result to a file', () => {
 
-    it('Check all rules by default, then show all SEO defects found', (done) => {
-
-        //const myDone = (err, data) => {
-        //    if (err) {
-        //        console.log(err);
-        //    } else {
-        //        console.log(data);
-        //        rrr = data;
-        //        expect("X").to.equal("Y");
-        //        expect(summary).to.eventually.equal("XXX");
-        //    }
-        //};
-
-         new SeoInspector({ done: done })
-             .read('tests/source/bad.html')
-             .write('tests/destination/bad01.txt');
-
-       // done();
-    });
-
-    it('Check all rules by default, then show all SEO defects found 22222', () => {
-    console.log("rrr");
-    console.log(rrr);
-        //done();
-    });
-
-
-            //});
-        //};
-
-        //inspect()
-        //    .then(
-        //        data => {
-        //            console.log(data);
-        //            getFileContent('tests/destination/bad01.txt');
-        //        }
-        //    )
-        //    .then(
-        //        content => {
-        //            console.log(content)
-        //            resolve('');
-        //        }
-        //    );
-
+    it('Check all rules by default, then no any SEO defect found', () => {
         
-        
+        const inspect = () => {
+            return new Promise((resolve, reject) => {
+                new SeoInspector({ done: 
+                                     (err, contentStr) => {
+                                         if (err) throw err;
+                                         resolve(contentStr);
+                                     }
+                                 })
+                .read('tests/source/good.html')
+                .write('tests/destination/good01.txt');
+            });
+        };
 
-/*
-        new SeoInspector({ done: done })
-            .read('tests/source/bad.html')
-            .write('tests/destination/bad01.txt');
-        getFileContent('tests/destination/bad01.txt', (actualSummary) => {
-            let expectedSummary = "SEO defects found: \nThere are 2 <img> tag without alt attribute\nThere are 2 <a> tag without rel attribute\nThis HTML without <title> tag\nThis HTML without <meta name=\"descriptions\"> tag\nThis HTML without <meta name=\"keywords\"> tag\nThis HTML have more than 15 <strong> tags\nThis HTML have more than one <h1> tagXXX\n";
-console.log(expectedSummary);
-console.log(actualSummary);
-            var aaaa = actualSummary;
-            expect("X").to.equal("Y");
+        return inspect().then( actualSummary => {
+            let expectedSummary = "No any SEO defect found. \n";
             expect(actualSummary).to.equal(expectedSummary);
         });
-        */
+
+    });
+
+    it('Check all rules by default, then show all SEO defects found', () => {
+        
+        const inspect = () => {
+            return new Promise((resolve, reject) => {
+                new SeoInspector({ done: 
+                                     (err, contentStr) => {
+                                         if (err) throw err;
+                                         resolve(contentStr);
+                                     }
+                                 })
+                .read('tests/source/bad.html')
+                .write('tests/destination/bad01.txt');
+            });
+        };
+
+        return inspect().then( actualSummary => {
+            let expectedSummary = "SEO defects found: \nThere are 2 <img> tag without alt attribute\nThere are 2 <a> tag without rel attribute\nThis HTML without <title> tag\nThis HTML without <meta name=\"descriptions\"> tag\nThis HTML without <meta name=\"keywords\"> tag\nThis HTML have more than 15 <strong> tags\nThis HTML have more than one <h1> tag\n";
+            expect(actualSummary).to.equal(expectedSummary);
+        });
+
+    });
+
+    it('Check rule1 and rule4, then show all SEO defects found', () => {
+        
+        const inspect = () => {
+            return new Promise((resolve, reject) => {
+                new SeoInspector({ done: 
+                                     (err, contentStr) => {
+                                         if (err) throw err;
+                                         resolve(contentStr);
+                                     }
+                                 })
+                .read('tests/source/bad.html')
+                .addRule('ImgTagWithAltAttritube')
+                .addRule('NoTooManyStrongTags')
+                .write('tests/destination/bad02.txt');
+            });
+        };
+
+        return inspect().then( actualSummary => {
+            let expectedSummary = "SEO defects found: \nThere are 2 <img> tag without alt attribute\nThis HTML have more than 15 <strong> tags\n";
+            expect(actualSummary).to.equal(expectedSummary);
+        });
+
+    });
+
+    it('Check rule1 and rule4, and rule4 has custom threshold, then show all SEO defects found', () => {
+        
+        const inspect = () => {
+            return new Promise((resolve, reject) => {
+                new SeoInspector({ done: 
+                                     (err, contentStr) => {
+                                         if (err) throw err;
+                                         resolve(contentStr);
+                                     }
+                                 })
+                .read('tests/source/bad.html')
+                .addRule('ImgTagWithAltAttritube')
+                .addRule('NoTooManyStrongTags', { threshold: 20 })
+                .write('tests/destination/bad03.txt');
+            });
+        };
+
+        return inspect().then( actualSummary => {
+            let expectedSummary = "SEO defects found: \nThere are 2 <img> tag without alt attribute\n";
+            expect(actualSummary).to.equal(expectedSummary);
+        });
+
+    });
+
+    it('Check rule1 and a new user custom rule, then show all SEO defects found', () => {
+        
+        const inspect = () => {
+            return new Promise((resolve, reject) => {
+                new SeoInspector({ done: 
+                                     (err, contentStr) => {
+                                         if (err) throw err;
+                                         resolve(contentStr);
+                                     }
+                                 })
+                .read('tests/source/bad.html')
+                .addRule('ImgTagWithAltAttritube')
+                .addRule('UserCustom', { object: new UserCustomRule({ threshold: 5 }) })
+                .write('tests/destination/bad04.txt');
+            });
+        };
+
+        return inspect().then( actualSummary => {
+            let expectedSummary = "SEO defects found: \nThere are 2 <img> tag without alt attribute\nUser custom rule violated\n";
+            expect(actualSummary).to.equal(expectedSummary);
+        });
+
+    });
 
 });

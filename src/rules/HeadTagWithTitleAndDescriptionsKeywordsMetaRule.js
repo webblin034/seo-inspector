@@ -5,7 +5,7 @@ import BaseRule from './BaseRule';
 class HeadTagWithTitleAndDescriptionsKeywordsMetaRule extends BaseRule {
 
     check(dom) {
-        if (this.options.enabled == 0) {
+        if (this.options.enabled === 0) {
             return;
         }
 	let report = [];

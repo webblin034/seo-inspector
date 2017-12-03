@@ -1,5 +1,5 @@
 'use strict';
 
-var seoInspector = require('./build/SeoInspector.js');
+var SeoInspector = require('./build/SeoInspector.js');
 
-module.exports = seoInspector; 
+module.exports = SeoInspector; 
